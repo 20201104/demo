@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ajax</title>
+  </head>
+  <body>
+    <!-- 
+        1. ajax 是什么？
+            q全称： async JavaScript and xml （json）
+                   异步的    JS      和   "{}"
+            同步： 一行一行执行  一个时间点只能执行一个代码
+            异步： 可以同时进行
+
+        2. js 实现ajax
+     -->
+    <form action="#" method="POST">
+      <input type="text" name="name" />
+      <input type="text" name="age" />
+      <input type="submit" value="提交" />
+    </form>
+
+    <script>
+      // // var a = 1;
+      // // console.log(b);
+      // // a = 2;
+      // // console.log(a);
+      // var xhr = new XMLHttpRequest();
+
+      // // xhr.readyState  : 0 - 4
+      // // 0   没有进行数据交互
+      // // 1 代表还没有建立连接
+      // // 2  建立连接了
+      // // 3  数据传递完成
+      // // 4   响应已经完成
+      // // 监听xhr.readyState的变化
+      // xhr.onreadystatechange = function () {
+      //     console.log(xhr.readyState)
+      //     if (xhr.readyState == 4) {
+      //         if (xhr.status == 200) {
+      //             renderDom(xhr.responseText);
+      //         }
+      //     }
+      // }
+      // //  第一个参数代表请求方式（该请求方式由 后端决定）   第二个参数代表的是请求地址  第三个参数代表的是是否异步
+      // xhr.open('GET', './test.json?data=duyi', true);
+      // xhr.send();
+
+      // function renderDom(data) {
+      //     console.log(JSON.parse(data));
+      // }
+
+      /**
+       * 请求方式  method
+       * 请求地址  url
+       * 是否异步  isAsync
+       * 请求数据   data   key=value&key1=value1
+       * 回调函数   callback
+       * */
+      function ajax(options) {
+        var xhr = null;
+        if (window.XMLHttpRequest) {
+          xhr = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+          xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        } else {
+          alert("当前浏览器不支持XMLHTTPRequest");
+        }
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+              options.callback(xhr.responseText);
+            }
+          }
+        };
+        // get请求方式的数据需要放在请求地址当中
+        if (options.method === "GET") {
+          xhr.open("GET", options.url + "?" + options.data, options.isAsync);
+          xhr.send();
+        } else {
+          //其他方式的数据需要放在请求体当中  请求体的编码类型需要设置
+          xhr.open(options.method, options.url, options.isAsync);
+          // 设置传递过程当中数据的编码类型
+          xhr.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+          );
+          xhr.send(options.data);
+        }
+      }
+
+      ajax({
+        method: "GET",
+        url: "./test.json",
+        data: "data=duyi",
+        isAsync: true,
+        callback: function (data) {
+          console.log(data);
+        },
+      });
+    </script>
+  </body>
+</html>
